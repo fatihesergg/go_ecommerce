@@ -1,0 +1,741 @@
+definitions:
+  dto.CategoryCreateDto:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  dto.CategoryUpdateDto:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    required:
+    - id
+    - name
+    type: object
+  dto.CreateOrderDto:
+    properties:
+      products:
+        items:
+          $ref: '#/definitions/dto.OrderItemDto'
+        type: array
+    required:
+    - products
+    type: object
+  dto.Login:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dto.OrderItemDto:
+    properties:
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
+  dto.ProductCreateDto:
+    properties:
+      category_id:
+        type: integer
+      image_url:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+    required:
+    - category_id
+    - name
+    - price
+    - stock
+    type: object
+  dto.ProductUpdateDto:
+    properties:
+      category_id:
+        type: integer
+      id:
+        type: integer
+      image_url:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+    required:
+    - category_id
+    - id
+    - name
+    - price
+    - stock
+    type: object
+  dto.Register:
+    properties:
+      email:
+        type: string
+      lastName:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      userName:
+        type: string
+    required:
+    - email
+    - lastName
+    - name
+    - password
+    - userName
+    type: object
+  dto.ReviewCreateDto:
+    properties:
+      comment:
+        type: string
+      product_id:
+        type: integer
+    required:
+    - comment
+    - product_id
+    type: object
+  dto.ReviewUpdateDto:
+    properties:
+      comment:
+        type: string
+      id:
+        type: integer
+      product_id:
+        type: integer
+    required:
+    - comment
+    - id
+    - product_id
+    type: object
+  model.Category:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Order:
+    properties:
+      id:
+        type: integer
+      products:
+        items:
+          $ref: '#/definitions/model.OrderItem'
+        type: array
+      total_amount:
+        type: number
+      user_id:
+        type: integer
+    type: object
+  model.OrderItem:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      orderID:
+        type: integer
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  model.Product:
+    properties:
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  model.Review:
+    properties:
+      comment:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      product_id:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  util.ApiResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: Basic e-commerce api writtin in go.
+  termsOfService: http://swagger.io/terms/
+  title: go_ecommerce API
+  version: "1.0"
+paths:
+  /category:
+    get:
+      description: get all category
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/util.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Category'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      summary: Show all category
+      tags:
+      - category
+    post:
+      consumes:
+      - application/json
+      description: Create  a category
+      parameters:
+      - description: Create Category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CategoryCreateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      security:
+      - Bearer: []
+      summary: Create a category
+      tags:
+      - category
+    put:
+      consumes:
+      - application/json
+      description: Update  a category
+      parameters:
+      - description: Update Category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CategoryUpdateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a category
+      tags:
+      - category
+  /category/{id}:
+    get:
+      description: get category by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/util.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Category'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      summary: Show a category
+      tags:
+      - category
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login.
+      parameters:
+      - description: credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      summary: Login
+      tags:
+      - Auth
+  /order:
+    post:
+      description: Create a order
+      parameters:
+      - description: Order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateOrderDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a order
+      tags:
+      - order
+  /order/{id}:
+    get:
+      description: get order by ID
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/util.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Order'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      summary: Show a order
+      tags:
+      - order
+  /product:
+    get:
+      description: get products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/util.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Product'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      summary: Show all product
+      tags:
+      - product
+    post:
+      consumes:
+      - application/json
+      description: Create  a product
+      parameters:
+      - description: Create Product
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ProductCreateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a product
+      tags:
+      - product
+    put:
+      consumes:
+      - application/json
+      description: Update a product
+      parameters:
+      - description: Update Product
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ProductUpdateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a product
+      tags:
+      - product
+  /product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete  a product
+      parameters:
+      - description: Product ID
+        in: path
+        name: productID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a product
+      tags:
+      - product
+    get:
+      description: get product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/util.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      summary: Show a product
+      tags:
+      - product
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Register
+      parameters:
+      - description: User informations
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Register'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      summary: Register
+      tags:
+      - Auth
+  /review:
+    post:
+      consumes:
+      - application/json
+      description: Create a review
+      parameters:
+      - description: Review
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ReviewCreateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a review
+      tags:
+      - review
+    put:
+      consumes:
+      - application/json
+      description: Update a review
+      parameters:
+      - description: Review
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ReviewUpdateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a review
+      tags:
+      - review
+  /review/{id}:
+    delete:
+      description: Delete a review
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a review
+      tags:
+      - review
+    get:
+      description: get review by ID
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/util.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Review'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ApiResponse'
+      summary: Show a review
+      tags:
+      - review
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
